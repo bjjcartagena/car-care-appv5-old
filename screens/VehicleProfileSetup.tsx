@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../supabaseClient';
 
 const CAR_MAKES = [
     "Abarth", "Alfa Romeo", "Audi", "BMW", "BYD", "Citroën", "Cupra", "Dacia",
@@ -22,9 +20,8 @@ const MOTO_MAKES = [
 const VehicleProfileSetup: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, profile } = useAuth();
 
-    // Default to car if no state is passed
+    // Recibimos si es coche o moto de la pantalla anterior
     const vehicleType = location.state?.vehicleType || 'car';
     const isMoto = vehicleType === 'moto';
 
@@ -32,75 +29,18 @@ const VehicleProfileSetup: React.FC = () => {
     const [model, setModel] = useState("");
     const [mileage, setMileage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-    useEffect(() => {
-        if (!user) navigate('/login');
-    }, [user, navigate]);
-
+    // Función simplificada: No guarda nada en base de datos, solo simula y avanza
     const handleSave = async () => {
-        if (!make || !user || !profile) return;
+        if (!make) return;
         setLoading(true);
 
-        // Check limits
-        const { count, error } = await supabase
-            .from('vehicles')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id);
-
-        if (error) {
-            console.error(error);
+        // Simulamos una pequeña espera para que parezca real
+        setTimeout(() => {
             setLoading(false);
-            return;
-        }
-
-        const currentCount = count || 0;
-        const limit = profile.vehicles_limit || 1;
-
-        if (currentCount >= limit) {
-            setShowUpgradeModal(true);
-            setLoading(false);
-            return;
-        }
-
-        const { error: insertError } = await supabase.from('vehicles').insert({
-            user_id: user.id,
-            type: vehicleType,
-            make,
-            model: model || (isMoto ? "Modelo Desconocido" : "Modelo Desconocido"),
-            odometer_km: parseInt(mileage) || 0
-        });
-
-        if (insertError) {
-            console.error("Error saving vehicle:", insertError);
-            alert("Error saving vehicle");
-        } else {
+            // Navegamos al Dashboard como si todo hubiera ido bien
             navigate('/dashboard');
-        }
-        setLoading(false);
-    };
-
-    const handleUpgrade = async (type: 'home' | 'family') => {
-        setLoading(true);
-        try {
-            const endpoint = type === 'home' ? '/api/stripe/checkout-home' : '/api/stripe/checkout-family';
-            const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user?.id, email: user?.email })
-            });
-            const data = await res.json();
-            if (data.url) {
-                window.location.href = data.url;
-            } else {
-                alert('Error initiating checkout');
-            }
-        } catch (error) {
-            console.error(error);
-            alert('Error initiating checkout');
-        } finally {
-            setLoading(false);
-        }
+        }, 1000);
     };
 
     return (
@@ -218,40 +158,6 @@ const VehicleProfileSetup: React.FC = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Upgrade Modal */}
-            {showUpgradeModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-[#1a2920] w-full max-w-md rounded-2xl p-6 shadow-xl animate-in zoom-in-95">
-                        <h3 className="text-xl font-bold mb-4 text-center">Límite Alcanzado</h3>
-                        <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
-                            Has alcanzado el límite de vehículos de tu plan actual ({profile?.vehicles_limit}). Mejora tu plan para añadir más.
-                        </p>
-                        <div className="flex flex-col gap-3">
-                            <button
-                                onClick={() => handleUpgrade('home')}
-                                className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors flex justify-between px-6"
-                            >
-                                <span>Pack Home (3 Vehículos)</span>
-                                <span>14,95€</span>
-                            </button>
-                            <button
-                                onClick={() => handleUpgrade('family')}
-                                className="w-full py-4 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-colors flex justify-between px-6"
-                            >
-                                <span>Pack Familiar (5 Vehículos)</span>
-                                <span>24,95€</span>
-                            </button>
-                            <button
-                                onClick={() => setShowUpgradeModal(false)}
-                                className="mt-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
