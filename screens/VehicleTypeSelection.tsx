@@ -1,31 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DarkModeToggle from '../components/DarkModeToggle';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../supabaseClient';
+
+// Hemos quitado las importaciones de Supabase y Auth para que no den problemas
 
 const VehicleTypeSelection: React.FC = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
-    const [hasVehicles, setHasVehicles] = useState(false);
+    
+    // Forzamos a que siempre parezca que no hay vehículos (como en tu foto)
+    const hasVehicles = false;
 
-    useEffect(() => {
-        if (!user) return;
-
-        const checkVehicles = async () => {
-            const { count, error } = await supabase
-                .from('vehicles')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id);
-
-            if (!error && count !== null && count > 0) {
-                setHasVehicles(true);
-            }
-        };
-        checkVehicles();
-    }, [user]);
-
+    // Función simplificada: Solo navega a la siguiente pantalla
     const selectType = (type: 'car' | 'moto') => {
+        // Pasamos el tipo (car o moto) a la siguiente pantalla pero sin guardar nada en BD
         navigate('/setup-profile', { state: { vehicleType: type } });
     };
 
@@ -44,7 +31,8 @@ const VehicleTypeSelection: React.FC = () => {
                     <button className="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                         <span className="material-symbols-outlined">settings</span>
                     </button>
-                    <button onClick={() => { supabase.auth.signOut(); navigate('/login'); }} className="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
+                    {/* Botón de Salir simplificado (solo te lleva al login sin llamar a Supabase) */}
+                    <button onClick={() => navigate('/login')} className="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
                         <span className="material-symbols-outlined">logout</span>
                     </button>
                 </div>
@@ -58,7 +46,7 @@ const VehicleTypeSelection: React.FC = () => {
                     <div className="flex flex-col gap-3 w-full">
                         <div className="flex gap-6 justify-between items-center">
                             <p className="text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wide">
-                                {hasVehicles ? 'Nuevo Vehículo' : 'Paso 1 de 4'}
+                                Paso 1 de 4
                             </p>
                             <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Configuración</p>
                         </div>
@@ -70,7 +58,7 @@ const VehicleTypeSelection: React.FC = () => {
                     {/* Page Heading */}
                     <div className="flex flex-col gap-3 text-center sm:text-left mt-4">
                         <h1 className="text-slate-900 dark:text-white text-4xl sm:text-5xl font-black leading-tight tracking-tight">
-                            {hasVehicles ? 'Añadir otro vehículo.' : 'Vamos a prepararlo todo.'}
+                            Vamos a prepararlo todo.
                         </h1>
                         <p className="text-slate-500 dark:text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
                             Selecciona tu tipo de vehículo para personalizar el programa de mantenimiento y los recordatorios.
@@ -79,22 +67,6 @@ const VehicleTypeSelection: React.FC = () => {
 
                     {/* Selection Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4">
-
-                        {/* Garage Card (Only if vehicles exist) */}
-                        {hasVehicles && (
-                            <button onClick={() => navigate('/dashboard')} className="col-span-1 sm:col-span-2 group relative flex flex-row items-center gap-6 rounded-xl border-2 border-primary/30 bg-primary/5 p-6 transition-all duration-200 hover:border-primary hover:bg-primary/10 hover:shadow-xl hover:shadow-primary/10 focus:outline-none focus:ring-4 focus:ring-primary/20 text-left">
-                                <div className="flex items-center justify-center h-14 w-14 shrink-0 rounded-full bg-primary text-white group-hover:scale-110 transition-transform duration-200 shadow-lg shadow-primary/30">
-                                    <span className="material-symbols-outlined text-3xl">garage_home</span>
-                                </div>
-                                <div className="flex flex-col gap-1 min-w-0">
-                                    <h2 className="text-slate-900 dark:text-white text-xl font-bold leading-tight">Ir a Mi Garaje</h2>
-                                    <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">Ver mis vehículos guardados</p>
-                                </div>
-                                <div className="ml-auto text-primary hidden sm:block">
-                                    <span className="material-symbols-outlined text-3xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                </div>
-                            </button>
-                        )}
 
                         {/* Car Card */}
                         <button onClick={() => selectType('car')} className="group relative flex flex-col items-center sm:items-start gap-6 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 transition-all duration-200 hover:border-primary hover:shadow-xl hover:shadow-primary/10 focus:outline-none focus:ring-4 focus:ring-primary/20 text-left">
@@ -131,16 +103,10 @@ const VehicleTypeSelection: React.FC = () => {
                             <span className="material-symbols-outlined text-base">timer</span>
                             Configuración en menos de 2 minutos.
                         </p>
-                        {!hasVehicles && (
-                            <a className="inline-block mt-4 text-sm font-semibold text-slate-400 hover:text-primary transition-colors" href="#">
-                                Aún no tengo vehículo
-                            </a>
-                        )}
-                        {hasVehicles && (
-                            <button onClick={() => navigate('/dashboard')} className="inline-block mt-4 text-sm font-bold text-primary hover:underline transition-colors">
-                                Cancelar y volver al Panel
-                            </button>
-                        )}
+                        
+                        <a className="inline-block mt-4 text-sm font-semibold text-slate-400 hover:text-primary transition-colors" href="#">
+                            Aún no tengo vehículo
+                        </a>
                     </div>
                 </div>
             </div>
