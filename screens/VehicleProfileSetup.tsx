@@ -1,142 +1,64 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const CAR_MAKES = [
-    "Abarth", "Alfa Romeo", "Audi", "BMW", "BYD", "Citroën", "Cupra", "Dacia",
-    "DS Automobiles", "Fiat", "Ford", "Honda", "Hyundai", "Jaguar", "Jeep",
-    "Kia", "Land Rover", "Lexus", "Mazda", "Mercedes-Benz", "MG", "Mini",
-    "Mitsubishi", "Nissan", "Opel", "Peugeot", "Polestar", "Porsche", "Renault",
-    "Seat", "Skoda", "Smart", "Subaru", "Suzuki", "Tesla", "Toyota",
-    "Volkswagen", "Volvo"
-];
-
-const MOTO_MAKES = [
-    "Aprilia", "Benelli", "BMW Motorrad", "CFMoto", "Ducati", "Harley-Davidson",
-    "Honda", "Husqvarna", "Indian", "Kawasaki", "KTM", "Kymco", "Moto Guzzi",
-    "MV Agusta", "Piaggio", "Royal Enfield", "Suzuki", "Sym", "Triumph",
-    "Vespa", "Voge", "Yamaha", "Zontes"
-];
-
 const VehicleProfileSetup: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
     const vehicleType = location.state?.vehicleType || 'car';
-    const isMoto = vehicleType === 'moto';
 
     const [make, setMake] = useState("");
     const [model, setModel] = useState("");
     const [mileage, setMileage] = useState("");
-    const [loading, setLoading] = useState(false);
 
-    const handleSave = async () => {
+    const handleSave = () => {
         if (!make) return;
-        setLoading(true);
-
-        // Simulamos guardado y PASAMOS LOS DATOS REALES al Dashboard
-        setTimeout(() => {
-            setLoading(false);
-            navigate('/dashboard', { 
-                state: { 
-                    localVehicle: {
-                        id: 'local-1',
-                        type: vehicleType,
-                        make: make,
-                        model: model || 'Modelo Desconocido',
-                        mileage: parseInt(mileage) || 0,
-                        created_at: new Date().toISOString()
-                    }
-                } 
-            });
-        }, 500);
+        
+        // ENVÍA LOS DATOS DIRECTAMENTE AL DASHBOARD
+        navigate('/dashboard', { 
+            state: { 
+                localVehicle: {
+                    id: 'local-1',
+                    type: vehicleType,
+                    make: make,
+                    model: model || 'Modelo Estándar',
+                    mileage: mileage || 0
+                }
+            } 
+        });
     };
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display antialiased text-[#111813] dark:text-white min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary selection:text-black">
-            {/* Fondo decorativo */}
-            <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 dark:bg-primary/5 rounded-full blur-[120px]"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/5 dark:bg-blue-500/5 rounded-full blur-[100px]"></div>
-            </div>
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white dark:bg-[#111813] text-slate-900 dark:text-white">
+            <div className="w-full max-w-md">
+                <h1 className="text-3xl font-black mb-2">Datos del Vehículo</h1>
+                <p className="text-gray-500 mb-8">Rellena la ficha técnica básica.</p>
 
-            <div className="layout-container flex h-full grow flex-col justify-center items-center py-10 px-4 sm:px-6 lg:px-8">
-                <div className="w-full max-w-[580px] bg-white dark:bg-[#1a2920] rounded-2xl shadow-xl dark:shadow-none border border-gray-100 dark:border-[#2a3f32] overflow-hidden flex flex-col">
-                    <div className="px-8 pt-8 pb-4">
-                        <div className="flex justify-between items-end mb-3">
-                            <div className="flex flex-col gap-1">
-                                <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Paso 2 de 4</span>
-                                <h2 className="text-sm font-semibold text-[#111813] dark:text-gray-200">Datos del Vehículo</h2>
-                            </div>
-                            <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">50% Completado</span>
-                        </div>
-                        <div className="h-2 w-full bg-gray-100 dark:bg-[#25382e] rounded-full overflow-hidden">
-                            <div className="h-full bg-primary w-1/2 rounded-full shadow-glow"></div>
-                        </div>
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-bold mb-1">Marca</label>
+                        <select className="w-full h-12 border rounded-lg px-4 bg-transparent" value={make} onChange={e => setMake(e.target.value)}>
+                            <option value="" disabled>Selecciona...</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Ford">Ford</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Seat">Seat</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold mb-1">Modelo</label>
+                        <input className="w-full h-12 border rounded-lg px-4 bg-transparent" type="text" placeholder="Ej. Corolla" value={model} onChange={e => setModel(e.target.value)} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-bold mb-1">Kilómetros</label>
+                        <input className="w-full h-12 border rounded-lg px-4 bg-transparent" type="number" placeholder="Ej. 120000" value={mileage} onChange={e => setMileage(e.target.value)} />
                     </div>
 
-                    <div className="px-8 py-2 flex-1">
-                        <div className="mb-8">
-                            <h1 className="text-[32px] font-bold leading-tight text-[#111813] dark:text-white mb-2 tracking-tight">
-                                Vamos a configurar tu {isMoto ? 'moto' : 'coche'}.
-                            </h1>
-                            <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed">
-                                Introduce los detalles para cargar el plan de mantenimiento.
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col gap-6">
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-[#111813] dark:text-gray-200">Marca</label>
-                                <div className="relative group">
-                                    <select
-                                        value={make}
-                                        onChange={(e) => setMake(e.target.value)}
-                                        className="form-input-transition block w-full h-14 rounded-xl border border-gray-200 dark:border-[#354f40] bg-white dark:bg-[#15231b] px-4 text-base text-[#111813] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none cursor-pointer"
-                                    >
-                                        <option disabled value="">Selecciona una marca</option>
-                                        {(isMoto ? MOTO_MAKES : CAR_MAKES).map((brand) => (
-                                            <option key={brand} value={brand}>{brand}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-[#111813] dark:text-gray-200">Modelo</label>
-                                <input
-                                    value={model}
-                                    onChange={(e) => setModel(e.target.value)}
-                                    className="form-input-transition block w-full h-14 rounded-xl border border-gray-200 dark:border-[#354f40] bg-white dark:bg-[#15231b] px-4 text-base text-[#111813] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                    placeholder={isMoto ? "ej. MT-07" : "ej. Corolla"}
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="block text-sm font-bold text-[#111813] dark:text-gray-200">Kilometraje</label>
-                                <div className="relative">
-                                    <input
-                                        value={mileage}
-                                        onChange={(e) => setMileage(e.target.value)}
-                                        className="form-input-transition block w-full h-14 rounded-xl border border-gray-200 dark:border-[#354f40] bg-white dark:bg-[#15231b] px-4 pr-16 text-base text-[#111813] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                                        placeholder="ej. 25000"
-                                        type="number"
-                                    />
-                                    <div className="absolute inset-y-0 right-0 flex items-center px-4"><span className="text-sm font-semibold text-gray-500">km</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-8 mt-4 bg-gray-50 dark:bg-[#15231b] border-t border-gray-100 dark:border-[#2a3f32]">
-                        <button
-                            onClick={handleSave}
-                            disabled={!make || loading}
-                            className={`w-full h-14 font-bold text-lg rounded-xl shadow-lg flex items-center justify-center gap-3 ${!make || loading ? 'bg-gray-200 text-gray-400' : 'bg-primary text-white'}`}
-                        >
-                            {loading ? 'Guardando...' : 'Guardar Vehículo'}
-                            <span className="material-symbols-outlined">arrow_forward</span>
-                        </button>
-                    </div>
+                    <button onClick={handleSave} disabled={!make} className="w-full h-12 bg-blue-600 text-white font-bold rounded-lg mt-6 disabled:opacity-50">
+                        Guardar y Continuar
+                    </button>
                 </div>
             </div>
         </div>
