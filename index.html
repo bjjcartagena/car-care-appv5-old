@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Car Care App</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        // Primary using CSS variables for opacity support
+                        primary: "rgb(var(--primary-rgb) / <alpha-value>)",
+                        "primary-hover": "var(--primary-hover)",
+                        "primary-soft": "var(--primary-soft)",
+
+                        // Backgrounds (From Palette)
+                        "background-light": "#F7F8FA",
+                        "background-dark": "#0A0D14", // Grafito
+                        
+                        // Surfaces / Cards
+                        "card-light": "#FFFFFF",      // Surface
+                        "card-dark": "#111827",       // Surface Dark
+                        "surface-light": "#F2F4F7",   // Surface 2
+                        "surface-dark": "#0F172A",    // Surface 2 Dark
+
+                        // Text
+                        "text-main": "#111827",
+                        "text-main-dark": "#F3F4F6",
+                        "text-muted": "#4B5563",
+                        "text-muted-dark": "#9CA3AF",
+                        "text-subtle": "#6B7280",
+                        "text-light": "#FFFFFF",
+
+                        // Semantic Status Colors (Light Mode defaults, manual dark mode usage in components)
+                        "success": "#12B76A",
+                        "warning": "#F79009",
+                        "danger": "#F04438",
+                        "info": "#2E90FA",
+
+                        // Override Grays to match Border/Surface palette
+                        gray: {
+                            50: '#F9FAFB',
+                            100: '#F2F4F7', // Surface 2 Light
+                            200: '#E6E8EC', // Border Light
+                            300: '#D1D5DB',
+                            400: '#9CA3AF', // Text Muted Dark
+                            500: '#6B7280', // Text Subtle
+                            600: '#4B5563', // Text Muted Light
+                            700: '#283244', // Border Dark
+                            800: '#111827', // Surface Dark
+                            900: '#0F172A', // Surface 2 Dark
+                            950: '#0A0D14', // Background Dark
+                        }
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "soft": "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+                        "glow": "0 0 15px rgba(31, 111, 235, 0.3)"
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Manrope', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.1); border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.1); }
+        .form-input-transition { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+
+        /* CSS Variables for Dynamic Colors */
+        :root {
+            /* Light Mode Primary: #1F6FEB -> 31 111 235 */
+            --primary-rgb: 31 111 235;
+            --primary-hover: #1158C7;
+            --primary-soft: #EAF2FF;
+        }
+        .dark {
+            /* Dark Mode Primary: #4C8DFF -> 76 141 255 */
+            --primary-rgb: 76 141 255;
+            --primary-hover: #79A8FF;
+            --primary-soft: #102A55;
+        }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?deps=react@18.2.0,react-dom@18.2.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-text-main-dark transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
